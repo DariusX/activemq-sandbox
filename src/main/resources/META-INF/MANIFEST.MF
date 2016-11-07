@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Created-By: Testers Inc.
+Main-Class: com.zerses.amqsandbox.ActiveMqHelloWorld
