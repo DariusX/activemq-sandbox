@@ -10,10 +10,17 @@ import javax.jms.TextMessage;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 public class SimpleProducer implements Runnable {
+    
+    String msgText = "- EMPTY -";
+    public SimpleProducer(String msgText)
+    {
+        this.msgText = msgText;
+    }
     public void run() {
         try {
             // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://159.203.128.56:61616");
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
+          //  ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://159.203.128.56:61616");
 
             // Create a Connection
             Connection connection = connectionFactory.createConnection();
@@ -30,8 +37,7 @@ public class SimpleProducer implements Runnable {
             producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 
             // Create a messages
-            String text = "Hello world! From: " + Thread.currentThread().getName() + " : " + this.hashCode();
-            TextMessage message = session.createTextMessage(text);
+            TextMessage message = session.createTextMessage(this.msgText);
 
             // Tell the producer to send the message
             System.out.println("Sent message: " + message.hashCode() + " : " + Thread.currentThread().getName());
@@ -47,7 +53,7 @@ public class SimpleProducer implements Runnable {
     }
     
     public static void main(String[] args) throws Exception {
-        Thread myThread = new Thread(new SimpleProducer());
+        Thread myThread = new Thread(new SimpleProducer("Test Message"));
         myThread.setDaemon(false);
         myThread.start();
     }

@@ -20,7 +20,8 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
         try {
 
             // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://159.203.128.56:61616");
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
+          //  ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://159.203.128.56:61616");
 
             // Create a Connection
             Connection connection = connectionFactory.createConnection();
@@ -37,15 +38,20 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
             // Create a MessageConsumer from the Session to the Topic or Queue
             MessageConsumer consumer = session.createConsumer(destination);
 
-            // Wait for a message
-            Message message = consumer.receive(1000);
+            //Will wait and read the first N messages, then exit
+            //Note: We use a time-out, so we might get null messages too
+            for (int msgIdx = 0; msgIdx < 10; msgIdx++)
+            {
+                // Wait for a message
+                Message message = consumer.receive(5000);
 
-            if (message instanceof TextMessage) {
-                TextMessage textMessage = (TextMessage)message;
-                String text = textMessage.getText();
-                System.out.println("Received: " + text);
-            } else {
-                System.out.println("Received: " + message);
+                if (message instanceof TextMessage) {
+                    TextMessage textMessage = (TextMessage)message;
+                    String text = textMessage.getText();
+                    System.out.println("Received: " + text);
+                } else {
+                    System.out.println("Received: " + message);
+                }
             }
 
             consumer.close();
