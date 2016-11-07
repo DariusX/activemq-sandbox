@@ -20,8 +20,7 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
         try {
 
             // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost");
-          //  ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://159.203.128.56:61616");
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ActiveMqHelloWorld.BROKER_URL);
 
             // Create a Connection
             Connection connection = connectionFactory.createConnection();

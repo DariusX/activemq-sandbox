@@ -5,6 +5,9 @@ package com.zerses.amqsandbox;
  */
 public class ActiveMqHelloWorld {
 
+    //public static final String BROKER_URL = "vm://localhost";
+    public static final String BROKER_URL = "tcp://159.203.128.56:61616";
+    
     public static void main(String[] args) throws Exception {
         thread(new SimpleConsumer(), false);
         for (int i = 0; i < 3; i++) {
