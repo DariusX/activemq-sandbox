@@ -68,10 +68,10 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
                     System.out.println("Sending reply: " + inMessage.getJMSCorrelationID() + " Hashcode=" + outMessage.hashCode() + " : " + Thread.currentThread().getName());
                     System.out.println("Sending reply text: " + outMessage.getText());
                     if (inMessage.getJMSReplyTo() == null) {
+                        System.out.println("Sender has not sent a reply-to destination. No reply will be sent.");
+                    } else {
                         System.out.println("Replying to dest: " + inMessage.getJMSReplyTo());
                         producer.send(inMessage.getJMSReplyTo(), outMessage);
-                    } else {
-                        System.out.println("Sender has not sent a repto-to destination. No reply will be sent.");
                     }
                 }
 
