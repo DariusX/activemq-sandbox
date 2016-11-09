@@ -19,7 +19,7 @@ public class SimpleProducer implements Runnable {
     public void run() {
         try {
             // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ActiveMqHelloWorld.BROKER_URL);
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(TestConfig.BROKER_URL);
 
             // Create a Connection
             Connection connection = connectionFactory.createConnection();
@@ -29,7 +29,7 @@ public class SimpleProducer implements Runnable {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // Create the destination (Topic or Queue)
-            Destination destination = session.createQueue("TEST.FOO");
+            Destination destination = session.createQueue(TestConfig.QUEUE_NAME);
 
             // Create a MessageProducer from the Session to the Topic or Queue
             MessageProducer producer = session.createProducer(destination);

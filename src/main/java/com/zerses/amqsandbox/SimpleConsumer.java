@@ -22,7 +22,7 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
         try {
 
             // Create a ConnectionFactory
-            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ActiveMqHelloWorld.BROKER_URL);
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(TestConfig.BROKER_URL);
 
             // Create a Connection
             Connection connection = connectionFactory.createConnection();
@@ -34,7 +34,7 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
             // Create the destination (Topic or Queue)
-            Destination destination = session.createQueue("TEST.FOO");
+            Destination destination = session.createQueue(TestConfig.QUEUE_NAME);
 
             // Create a MessageConsumer from the Session to the Topic or Queue
             MessageConsumer consumer = session.createConsumer(destination);
@@ -45,16 +45,16 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
 
             // Will wait and read the first N messages, then exit
             // Note: We use a time-out, so we might get null messages too
-            for (int msgIdx = 0; msgIdx < 10; msgIdx++) {
+            for (int msgIdx = 0; msgIdx < TestConfig.MAX_READS; msgIdx++) {
                 // Wait for a message
-                Message inMessage = consumer.receive(5000);
+                Message inMessage = consumer.receive(TestConfig.READ_TIMEOUT);
 
                 if (inMessage instanceof TextMessage) {
                     TextMessage textMessage = (TextMessage)inMessage;
                     String text = textMessage.getText();
                     System.out.println("Received text: " + text);
                 } else if (inMessage == null) {
-                    System.out.println("Received null message. Probably timed-out waiting ");
+                    System.out.println("Received null message. Probably timed-out waiting. Will re-try. ");
                 } else {
                     System.out.println("Received non-text message: " + inMessage);
                 }
@@ -67,8 +67,12 @@ public class SimpleConsumer implements Runnable, ExceptionListener {
                     outMessage.setJMSCorrelationID(inMessage.getJMSCorrelationID());
                     System.out.println("Sending reply: " + inMessage.getJMSCorrelationID() + " Hashcode=" + outMessage.hashCode() + " : " + Thread.currentThread().getName());
                     System.out.println("Sending reply text: " + outMessage.getText());
-                    System.out.println("Reply to dest: " + inMessage.getJMSReplyTo());
-                    producer.send(inMessage.getJMSReplyTo(), outMessage);
+                    if (inMessage.getJMSReplyTo() == null) {
+                        System.out.println("Replying to dest: " + inMessage.getJMSReplyTo());
+                        producer.send(inMessage.getJMSReplyTo(), outMessage);
+                    } else {
+                        System.out.println("Sender has not sent a repto-to destination. No reply will be sent.");
+                    }
                 }
 
             }
