@@ -3,13 +3,14 @@
 ## Purpose
 
 1. To create a program that reads messages from an ActiveMQ queue, and responds. This "listener" can then be used to facilitate testing from other systems
-2. To test AciveMQ features, as needed
+2. To test ActiveMQ features, as needed
 
 ## Prerequisites
 
 The machine running this, must have
 * An ActiveMQ broker (the code assumes the default port 61616 is in use; the IP is assumed to be localhost). To change these, edit the class TestConfig and re-build
 * A JVM to run the JAR
+* Notes specific to my box: `startamq.sh` starts AMQ, checks for port 61616 ; then, edit /etc/exports if the clientIP changed, and run `nfs.sh`; finally, start the Java listener/responder `java -jar atest`
 
 ## Packaging and installation
 
